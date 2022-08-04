@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "preact/hooks"
 import * as d3 from 'd3'
 import { forceSimulation } from 'd3-force';
 
-
 interface SocketClientProps {
     blockNumber: string;
     N: Record<string, string>[];
