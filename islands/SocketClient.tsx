@@ -104,7 +104,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
                     // console.log(d3.select(d.target).node().children[0].__data__.id);
                     d3.selectAll("circle").attr("fill", "#000")
 
-                    return d3.select(d.target).attr("fill", "#0000FF")
+                    return d3.select(d.target).attr("fill", "rgb(96, 165, 250)")
                 })
 
             node.append("title").text(({ index: i }) => nodeTitles[i]);
