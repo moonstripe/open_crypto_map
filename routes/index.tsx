@@ -14,7 +14,7 @@ interface NodesEdgesMeta {
 
 
 export const handler: Handlers = {
-  async GET(req, ctx) {
+  async GET(_, ctx) {
     const token = Deno.env.get("ALCHEMY_TOKEN")
     const number = await fetch('https://eth.moonstripe.com/v1/mainnet', { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1 }) }).then(r => r.json())
     // console.log(number.result);
