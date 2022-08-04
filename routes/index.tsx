@@ -12,6 +12,8 @@ interface NodesEdgesMeta {
   count: number
 }
 
+console.log(Deno.env.get("ALCHEMY_TOKEN"))
+
 export const handler: Handlers = {
   async GET(req, ctx) {
     
