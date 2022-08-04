@@ -8,8 +8,8 @@ import { forceSimulation } from 'd3-force';
 
 interface SocketClientProps {
     blockNumber: string;
-    N: Record<string, string>[],
-    E: Record<string, string>[]
+    N: Record<string, string>[];
+    E: Record<string, string>[];
 }
 
 export default ({ blockNumber, N, E }: SocketClientProps) => {
