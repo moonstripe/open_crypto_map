@@ -19,6 +19,35 @@ interface NodesEdgesMeta {
 export default ({ blockNumber, N, E }: SocketClientProps) => {
     const ref = useRef(null)
 
+    const intern = (value) => {
+        return value !== null && typeof value === "object" ? value.valueOf() : value;
+    }
+
+    const drag = (simulation) => {
+        function dragstarted(event) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            event.subject.fx = event.subject.x;
+            event.subject.fy = event.subject.y;
+        }
+
+        function dragged(event) {
+            event.subject.fx = event.x;
+            event.subject.fy = event.y;
+        }
+
+        function dragended(event) {
+            if (!event.active) simulation.alphaTarget(0);
+            event.subject.fx = null;
+            event.subject.fy = null;
+        }
+
+        return d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended);
+    }
+
+
     useEffect(() => {
         const svgElement = d3.select(ref.current)
         if (N.length > 0) {
@@ -80,34 +109,6 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
 
             // slow down with a small alpha
             simulation.alpha(0.5).restart()
-
-            function intern(value) {
-                return value !== null && typeof value === "object" ? value.valueOf() : value;
-            }
-
-            function drag(simulation) {
-                function dragstarted(event) {
-                    if (!event.active) simulation.alphaTarget(0.3).restart();
-                    event.subject.fx = event.subject.x;
-                    event.subject.fy = event.subject.y;
-                }
-
-                function dragged(event) {
-                    event.subject.fx = event.x;
-                    event.subject.fy = event.y;
-                }
-
-                function dragended(event) {
-                    if (!event.active) simulation.alphaTarget(0);
-                    event.subject.fx = null;
-                    event.subject.fy = null;
-                }
-
-                return d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended);
-            }
 
             // stop simulation on unmount
             return () => simulation.stop()
