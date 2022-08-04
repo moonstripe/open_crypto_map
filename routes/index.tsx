@@ -3,8 +3,8 @@ import { h } from "preact";
 import { tw } from "@twind";
 import { Handlers, PageProps } from "fresh/server.ts";
 import { WebSocketClient, StandardWebSocketClient } from 'websocket'
-import SocketClient from "../islands/SocketClient.tsx";
 import Web3Utils from 'web3-utils'
+import Graph from "../islands/Graph.tsx";
 
 interface NodesEdgesMeta {
   nodes: Record<string, string>[];
@@ -21,6 +21,8 @@ export const handler: Handlers = {
 
     const endpoint = `wss://eth-mainnet.g.alchemy.com/v2/${token}`;
     const ws: WebSocketClient = new StandardWebSocketClient(endpoint);
+
+    // console.log(ws)
 
     const returnData: NodesEdgesMeta = {
       nodes: [],
@@ -96,7 +98,7 @@ export default function Home({ data }: PageProps) {
         Crypto-Map: Ethereum by <a class={tw`text-blue-400`} href={'https://www.kojinglick.com'} target="_blank" rel="noopener noreferrer">Kojin Glick</a>
       </p>
       {
-        data.nodes.length > 0 ? <SocketClient blockNumber={data.bN} N={data.nodes} E={data.edges} /> : null
+        data.nodes.length > 0 ? <Graph blockNumber={data.bN} N={data.nodes} E={data.edges} /> : null
       }
       <script src="https://d3js.org/d3.v7.min.js"></script>
     </div>
