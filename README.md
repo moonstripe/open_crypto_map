@@ -1,4 +1,6 @@
-# fresh project
+# Open Crypto Map
+
+[View the Live Demo](https://opencryptomap.deno.dev/)
 
 ### Usage
 
