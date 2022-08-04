@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "start:dev": "deno run -A --watch=static/,routes/ dev.ts",
+    "start:dev": "ALCHEMY_TOKEN=v7WQrvzWQNIhe6TxRTkS_Mr1-ba3AzEM deno run -A --allow-read --allow-env --watch=static/,routes/ dev.ts",
     "start": "deno run -A --allow-read main.ts"
   },
   "importMap": "./import_map.json"

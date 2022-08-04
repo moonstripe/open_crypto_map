@@ -10,12 +10,6 @@ interface SocketClientProps {
     E: Record<string, string>[]
 }
 
-interface NodesEdgesMeta {
-    nodes: Record<string, string>[];
-    edges: Record<string, string>[];
-    count: number
-}
-
 export default ({ blockNumber, N, E }: SocketClientProps) => {
     const ref = useRef(null)
 

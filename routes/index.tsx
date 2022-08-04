@@ -14,6 +14,7 @@ interface NodesEdgesMeta {
 
 const token = Deno.env.get("ALCHEMY_TOKEN")
 
+
 export const handler: Handlers = {
   async GET(req, ctx) {
     
@@ -40,7 +41,7 @@ export const handler: Handlers = {
   
         ws.send(transactionQuery);
       });
-      ws.on("error", function (e) {reject(e)});
+      ws.on("error", function (message) {console.log('socket error', message, endpoint)});
       ws.on("message", function (message) {
         // parse block data into transaction graph
         let cleaned = JSON.parse(message.data);
