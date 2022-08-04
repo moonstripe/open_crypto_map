@@ -14,7 +14,7 @@ interface NodesEdgesMeta {
 
 
 export const handler: Handlers = {
-  async GET(_, ctx) {
+  async GET(req, ctx) {
     const token = Deno.env.get("ALCHEMY_TOKEN")
     const number = await fetch('https://eth.moonstripe.com/v1/mainnet', { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1 }) }).then(r => r.json())
     // console.log(number.result);
@@ -41,7 +41,7 @@ export const handler: Handlers = {
   
         ws.send(transactionQuery);
       });
-      ws.on("error", function (message) {console.log('socket error', message, endpoint)});
+      ws.on("error", function (message) {console.log('socket error', req, message, endpoint)});
       ws.on("message", function (message) {
         // parse block data into transaction graph
         let cleaned = JSON.parse(message.data);
