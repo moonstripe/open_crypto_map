@@ -1,6 +1,7 @@
 /** @jsx h */
-import { Fragment, h } from "preact";
-import { useEffect, useRef } from "preact/hooks"
+import { h } from "preact";
+import { tw } from "@twind"
+import { useEffect, useRef, useState } from "preact/hooks"
 import { forceSimulation } from 'd3-force';
 
 
@@ -11,6 +12,8 @@ interface SocketClientProps {
 }
 
 export default ({ blockNumber, N, E }: SocketClientProps) => {
+    const [selectedNode, setSelectedNode] = useState<string>('');
+
     const ref = useRef(null)
 
     const intern = (value: any) => {
@@ -59,7 +62,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
 
             const forceNode = d3.forceManyBody().strength(0.01);
             const forceLink = d3.forceLink(links).id(({ index: i }) => nodesId[i]);
-            const forceCollision = d3.forceCollide().radius(5);
+            const forceCollision = d3.forceCollide().radius(7);
 
             const simulation = forceSimulation(nodes)
                 .force("charge", forceNode)
@@ -77,7 +80,6 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
 
             link.append('title').text(({ index: i }) => edgesValue[i])
 
-
             const node = svgElement.append("g")
                 .attr("fill", "nodeFill")
                 .attr("stroke", "#999")
@@ -88,7 +90,23 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
                 .join("circle")
                 .attr("r", 2)
                 .call(drag(simulation))
-                .on("mouseover", (event) => { console.log(event.target.__data__.id) })
+                .on("click", (d) => {
+                    // setArray
+                    if (d3.style(d3.select(d.target).node(), 'fill') !== 'rgb(0, 0, 0)') {
+                        console.log('remove node')
+
+                        setSelectedNode('')
+                    }
+
+                    setSelectedNode(d3.select(d.target).node().children[0].__data__.id)
+
+
+
+                    // console.log(d3.select(d.target).node().children[0].__data__.id);
+                    d3.selectAll("circle").attr("fill", "#000")
+
+                    return d3.select(d.target).attr("fill", "#0000FF")
+                })
 
             node.append("title").text(({ index: i }) => nodeTitles[i]);
 
@@ -109,19 +127,28 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
             simulation.alpha(0.5).restart()
 
             // stop simulation on unmount
-            return () => simulation.stop()
+            return () => { simulation.stop(); }
         }
     }, [])
+
+    useEffect(() => {
+        console.log(selectedNode)
+    }, [selectedNode])
 
     return (
         <div>
             {
                 N.length > 0 ? (
-                    <Fragment>
+                    <div id="graph">
                         <p>Current Block Number: {blockNumber}</p>
                         <p>Transaction Count: {E.length}</p>
-                        <svg ref={ref} viewBox="-150 -150 300 300" style={{ position: 'absolute', top: '0', left: '0', width: "100vw", height: "100vh", zIndex: '-10' }} />
-                    </Fragment>
+                        {
+                            selectedNode.length > 0 ? (
+                                <p>Selected Node: <a class={tw`text-blue-400`} href={`https://etherscan.io/address/${selectedNode}`} target="_blank" rel="noopener noreferrer">{selectedNode}</a></p>
+                            ) : null
+                        }
+                        <svg ref={ref} viewBox="-150 -150 300 300" style={{ position: 'absolute', top: '0px', left: '0px', width: "100vw", height: "100vh", zIndex: '-10' }} />
+                    </div>
                 ) : <p>Loading: {blockNumber}</p>
             }
         </div>
