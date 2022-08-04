@@ -6,8 +6,8 @@ import { WebSocketClient, StandardWebSocketClient } from 'websocket'
 import SocketClient from "../islands/SocketClient.tsx";
 import { config } from "https://deno.land/x/dotenv@v3.2.0/mod.ts";
 import Web3Utils from 'web3-utils'
-import { resolve } from "https://deno.land/std@0.150.0/path/win32.ts";
-import { rejects } from "https://jspm.dev/npm:@jspm/core@2.0.0-beta.24/nodelibs/assert";
+
+console.log(config().ALCHEMY_TOKEN)
 
 interface NodesEdgesMeta {
   nodes: Record<string, string>[];
