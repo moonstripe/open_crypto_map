@@ -4,10 +4,7 @@ import { tw } from "@twind";
 import { Handlers, PageProps } from "fresh/server.ts";
 import { WebSocketClient, StandardWebSocketClient } from 'websocket'
 import SocketClient from "../islands/SocketClient.tsx";
-import { config } from "https://deno.land/x/dotenv@v3.2.0/mod.ts";
 import Web3Utils from 'web3-utils'
-
-console.log(Deno.env.get("ALCHEMY_TOKEN"))
 
 interface NodesEdgesMeta {
   nodes: Record<string, string>[];
@@ -21,7 +18,7 @@ export const handler: Handlers = {
     const number = await fetch('https://eth.moonstripe.com/v1/mainnet', { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1 }) }).then(r => r.json())
     console.log(number.result);
 
-    const endpoint = `wss://eth-mainnet.g.alchemy.com/v2/${config().ALCHEMY_TOKEN}`;
+    const endpoint = `wss://eth-mainnet.g.alchemy.com/v2/${Deno.env.get("ALCHEMY_TOKEN")}`;
     const ws: WebSocketClient = new StandardWebSocketClient(endpoint);
 
     const returnData: NodesEdgesMeta = {
