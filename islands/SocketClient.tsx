@@ -1,8 +1,7 @@
 /** @jsx h */
 import { Fragment, h } from "preact";
-import { useEffect, useRef, useState } from "preact/hooks"
+import { useEffect, useRef } from "preact/hooks"
 import { forceSimulation } from 'd3-force';
-import d3Dispatch from "https://cdn.skypack.dev/-/d3-dispatch@v3.0.1-v6nbfqO2iWOSwp77fYdB/dist=es2019,mode=imports/optimized/d3-dispatch.js";
 
 
 interface SocketClientProps {
