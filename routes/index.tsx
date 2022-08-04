@@ -82,7 +82,7 @@ export const handler: Handlers = {
 
     })
 
-    return await ctx.render({ nodes: returnData.nodes, edges: returnData.edges, bN: number.result })
+    return await ctx.render({ nodes: returnData.nodes, edges: returnData.edges, bN: Web3Utils.hexToNumberString(number.result) })
     
   },
 }
