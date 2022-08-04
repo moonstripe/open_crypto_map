@@ -56,7 +56,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
             let nodes = d3.map(N, (_, i) => ({ id: nodesId[i] }));
             let links = d3.map(E, (_, i) => ({ source: edgesSource[i], target: edgesTarget[i], weight: edgesValue[i] }));
 
-            const forceNode = d3.forceManyBody().strength(2);
+            const forceNode = d3.forceManyBody().strength(0.0002);
             const forceLink = d3.forceLink(links).id(({ index: i }) => nodesId[i]);
 
             const simulation = forceSimulation(nodes)
