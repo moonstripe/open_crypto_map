@@ -10,7 +10,6 @@
     "websocket": "https://deno.land/x/websocket@v0.1.4/mod.ts",
     "web3": "https://deno.land/x/web3@v0.11.1/mod.ts",
     "web3-utils": "https://deno.land/x/web3@v0.9.2/packages/web3-utils/src/index.js",
-    "d3-force": "https://cdn.skypack.dev/d3-force@3",
-    "dotenv": "https://deno.land/x/dotenv@v3.2.0/mod.ts"
+    "d3-force": "https://cdn.skypack.dev/d3-force@3"
   }
 }
