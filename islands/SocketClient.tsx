@@ -20,10 +20,8 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
     const ref = useRef(null)
 
     useEffect(() => {
-        console.log(N)
         const svgElement = d3.select(ref.current)
         if (N.length > 0) {
-            console.log(N)
             // compute values
             const nodesId = d3.map(N, n => n.id).map(intern);
             const nodeTitles = d3.map(N, (_, i) => nodesId[i]).map(intern);

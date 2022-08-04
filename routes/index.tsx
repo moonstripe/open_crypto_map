@@ -18,7 +18,7 @@ export const handler: Handlers = {
   async GET(req, ctx) {
     
     const number = await fetch('https://eth.moonstripe.com/v1/mainnet', { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1 }) }).then(r => r.json())
-    console.log(number.result);
+    // console.log(number.result);
 
     const endpoint = `wss://eth-mainnet.g.alchemy.com/v2/${token}`;
     const ws: WebSocketClient = new StandardWebSocketClient(endpoint);
@@ -89,7 +89,7 @@ export const handler: Handlers = {
 }
 
 export default function Home({ data }: PageProps) {
-  console.log(data)
+  // console.log(data)
   return (
     <div class={tw`p-4 mx-auto max-w-screen-md`}>
       <p class={tw`my-6`}>
