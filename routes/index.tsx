@@ -7,7 +7,7 @@ import SocketClient from "../islands/SocketClient.tsx";
 import { config } from "https://deno.land/x/dotenv@v3.2.0/mod.ts";
 import Web3Utils from 'web3-utils'
 
-console.log(config().ALCHEMY_TOKEN)
+console.log(Deno.env.get("ALCHEMY_TOKEN"))
 
 interface NodesEdgesMeta {
   nodes: Record<string, string>[];
