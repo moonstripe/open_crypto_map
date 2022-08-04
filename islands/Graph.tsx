@@ -179,8 +179,8 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
             {
                 N.length > 0 ? (
                     <div id="graph">
-                        <p>Current Block Number: {blockNumber}</p>
-                        <p>Transaction Count: {E.length}</p>
+                        <p class="dark:text-green-400">Current Block Number: {blockNumber}</p>
+                        <p class="dark:text-green-400">Transaction Count: {E.length}</p>
                         {
                             selectedNode.length > 0 ? (
                                 <p>Selected Node: <a class={tw`text-blue-400`} href={`https://etherscan.io/address/${selectedNode}`} target="_blank" rel="noopener noreferrer">{selectedNode}</a></p>
