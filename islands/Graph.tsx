@@ -62,7 +62,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
 
             const forceNode = d3.forceManyBody().strength(0.01);
             const forceLink = d3.forceLink(links).id(({ index: i }) => nodesId[i]);
-            const forceCollision = d3.forceCollide().radius(7);
+            const forceCollision = d3.forceCollide().radius(3);
 
             const simulation = forceSimulation(nodes)
                 .force("charge", forceNode)
