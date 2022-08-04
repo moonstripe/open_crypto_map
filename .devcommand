@@ -1,1 +1,0 @@
-ALCHEMY_TOKEN=v7WQrvzWQNIhe6TxRTkS_Mr1-ba3AzEM deno run -A --allow-read --allow-env --watch=static/,routes/ dev.ts
