@@ -12,7 +12,7 @@ interface NodesEdgesMeta {
   count: number
 }
 
-console.log(Deno.env.get("ALCHEMY_TOKEN"))
+const token = Deno.env.get("ALCHEMY_TOKEN")
 
 export const handler: Handlers = {
   async GET(req, ctx) {
@@ -20,7 +20,7 @@ export const handler: Handlers = {
     const number = await fetch('https://eth.moonstripe.com/v1/mainnet', { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1 }) }).then(r => r.json())
     console.log(number.result);
 
-    const endpoint = `wss://eth-mainnet.g.alchemy.com/v2/${Deno.env.get("ALCHEMY_TOKEN")}`;
+    const endpoint = `wss://eth-mainnet.g.alchemy.com/v2/${token}`;
     const ws: WebSocketClient = new StandardWebSocketClient(endpoint);
 
     const returnData: NodesEdgesMeta = {
