@@ -2,6 +2,7 @@
 import { Fragment, h } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks"
 import { forceSimulation } from 'd3-force';
+import d3Dispatch from "https://cdn.skypack.dev/-/d3-dispatch@v3.0.1-v6nbfqO2iWOSwp77fYdB/dist=es2019,mode=imports/optimized/d3-dispatch.js";
 
 
 interface SocketClientProps {
@@ -13,23 +14,23 @@ interface SocketClientProps {
 export default ({ blockNumber, N, E }: SocketClientProps) => {
     const ref = useRef(null)
 
-    const intern = (value) => {
+    const intern = (value: any) => {
         return value !== null && typeof value === "object" ? value.valueOf() : value;
     }
 
-    const drag = (simulation) => {
-        function dragstarted(event) {
+    const drag = (simulation: any) => {
+        function dragstarted(event: any) {
             if (!event.active) simulation.alphaTarget(0.3).restart();
             event.subject.fx = event.subject.x;
             event.subject.fy = event.subject.y;
         }
 
-        function dragged(event) {
+        function dragged(event: any) {
             event.subject.fx = event.x;
             event.subject.fy = event.y;
         }
 
-        function dragended(event) {
+        function dragended(event: any) {
             if (!event.active) simulation.alphaTarget(0);
             event.subject.fx = null;
             event.subject.fy = null;
@@ -44,6 +45,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
 
     useEffect(() => {
         const svgElement = d3.select(ref.current)
+
         if (N.length > 0) {
             // compute values
             const nodesId = d3.map(N, n => n.id).map(intern);
@@ -58,10 +60,12 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
 
             const forceNode = d3.forceManyBody().strength(0.01);
             const forceLink = d3.forceLink(links).id(({ index: i }) => nodesId[i]);
+            const forceCollision = d3.forceCollide().radius(10);
 
             const simulation = forceSimulation(nodes)
                 .force("charge", forceNode)
                 .force("link", forceLink)
+                .force("collision", forceCollision)
 
             const link = svgElement.append("g")
                 .attr("stroke", "#999")
@@ -85,6 +89,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
                 .join("circle")
                 .attr("r", 2)
                 .call(drag(simulation))
+                .on("mouseover", (event) => { console.log(event.target.__data__.id) })
 
             node.append("title").text(({ index: i }) => nodeTitles[i]);
 
@@ -116,7 +121,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
                     <Fragment>
                         <p>Current Block Number: {blockNumber}</p>
                         <p>Transaction Count: {E.length}</p>
-                        <svg ref={ref} viewBox="-150 -150 300 300" style={{ position: 'absolute', top: '0', left: '0', width: "100vw", height: "100vh", zIndex: '-10'}} />
+                        <svg ref={ref} viewBox="-150 -150 300 300" style={{ position: 'absolute', top: '0', left: '0', width: "100vw", height: "100vh", zIndex: '-10' }} />
                     </Fragment>
                 ) : <p>Loading: {blockNumber}</p>
             }
