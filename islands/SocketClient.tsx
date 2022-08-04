@@ -102,7 +102,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
 
 
                     // console.log(d3.select(d.target).node().children[0].__data__.id);
-                    d3.selectAll("circle").attr("fill", "#000")
+                    d3.selectAll("circle").attr("fill", "rgb(0, 0, 0)")
 
                     return d3.select(d.target).attr("fill", "rgb(96, 165, 250)")
                 })
