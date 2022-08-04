@@ -17,7 +17,6 @@ export const handler: Handlers = {
   async GET(req, ctx) {
     const token = Deno.env.get("ALCHEMY_TOKEN")
     const number = await fetch('https://eth.moonstripe.com/v1/mainnet', { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1 }) }).then(r => r.json())
-    // console.log(number.result);
 
     const endpoint = `wss://eth-mainnet.g.alchemy.com/v2/${token}`;
     const ws: WebSocketClient = new StandardWebSocketClient(endpoint);
