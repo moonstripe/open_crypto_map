@@ -93,7 +93,6 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
                 .on("click", (d) => {
                     // setArray
                     if (d3.style(d3.select(d.target).node(), 'fill') !== 'rgb(0, 0, 0)') {
-                        console.log('remove node')
 
                         setSelectedNode('')
                     }
@@ -130,10 +129,6 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
             return () => { simulation.stop(); }
         }
     }, [])
-
-    useEffect(() => {
-        console.log(selectedNode)
-    }, [selectedNode])
 
     return (
         <div>
