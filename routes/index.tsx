@@ -92,7 +92,7 @@ export default function Home({ data }: PageProps) {
   // console.log(data)
   return (
     <div class={tw`p-4 mx-auto max-w-screen-md`}>
-      <p class={tw`my-6`}>
+      <p class={tw`my-6 dark:text-green-400`}>
         {/* {data.blockNumber} */}
         Crypto-Map: Ethereum by <a class={tw`text-blue-400`} href={'https://www.kojinglick.com'} target="_blank" rel="noopener noreferrer">Kojin Glick</a>
       </p>
