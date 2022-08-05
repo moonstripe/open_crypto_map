@@ -44,7 +44,6 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
             .on("end", dragended);
     }
 
-
     useEffect(() => {
         const svgElement = d3.select(ref.current)
 
