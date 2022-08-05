@@ -91,7 +91,7 @@ export default function Home({ data }: PageProps) {
         Crypto-Map: Ethereum by <a class={tw`text-blue-400`} href={'https://www.kojinglick.com'} target="_blank" rel="noopener noreferrer">Kojin Glick</a>
       </p>
       {
-        data.nodes.length > 0 ? <Graph blockNumber={data.bN} N={data.nodes} E={data.edges} /> : null
+        data.nodes.length > 0 ? <Graph blockNumber={data.bN} N={data.nodes} E={data.edges} /> : <p>Loading graph...</p>
       }
       <script src="https://d3js.org/d3.v7.min.js"></script>
     </div>
