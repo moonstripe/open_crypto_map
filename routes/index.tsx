@@ -40,7 +40,9 @@ export const handler: Handlers = {
   
         ws.send(transactionQuery);
       });
+
       ws.on("error", function (message) {console.log('socket error', req, message, endpoint)});
+      
       ws.on("message", function (message) {
         // parse block data into transaction graph
         const cleaned = JSON.parse(message.data);
