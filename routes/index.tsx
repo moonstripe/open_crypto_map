@@ -21,7 +21,7 @@ export const handler: Handlers = {
     const endpoint = `wss://eth-mainnet.g.alchemy.com/v2/${token}`;
     const ws: WebSocketClient = new StandardWebSocketClient(endpoint);
 
-    // ToDo, find a way to forward my socket info to demo front end.
+    // ToDo, build pub sub model
 
     const returnData: NodesEdgesMeta = {
       nodes: [],
