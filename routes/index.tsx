@@ -43,9 +43,9 @@ export const handler: Handlers = {
       ws.on("error", function (message) {console.log('socket error', req, message, endpoint)});
       ws.on("message", function (message) {
         // parse block data into transaction graph
-        let cleaned = JSON.parse(message.data);
+        const cleaned = JSON.parse(message.data);
   
-        let { transactions } = cleaned.result
+        const { transactions } = cleaned.result
   
         const hexCheck: string[] = [];
   
@@ -78,13 +78,9 @@ export const handler: Handlers = {
           returnData.edges.push(edge);
           resolve();
         });
-  
       });
-
     })
-
     return await ctx.render({ nodes: returnData.nodes, edges: returnData.edges, bN: Web3Utils.hexToNumberString(number.result) })
-    
   },
 }
 
