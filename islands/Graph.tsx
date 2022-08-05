@@ -173,7 +173,7 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
     }, [])
 
     return (
-        <div class={tw`dark:text-green-400`}>
+        <div class={tw`text-green-400`}>
             {
                 N.length > 0 ? (
                     <div id="graph">
