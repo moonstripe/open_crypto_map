@@ -12,7 +12,7 @@ interface SocketClientProps {
 }
 
 export default ({ blockNumber, N, E }: SocketClientProps) => {
-    const [selectedNode, setSelectedNode] = useState<string>('');
+    const [selectedNode, setSelectedNode] = useState<string | undefined>();
 
     const ref = useRef(null)
 
@@ -173,17 +173,20 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
     }, [])
 
     return (
-        <div class={tw`text-green-400 inline`}>
-                    <div id="graph">
-                        <p>Current Block Number: {blockNumber}</p>
-                        <p>Transaction Count: {E.length}</p>
-                        {
-                            selectedNode.length > 0 ? (
-                                <p>Selected Node: <a class={tw`text-blue-400`} href={`https://etherscan.io/address/${selectedNode}`} target="_blank" rel="noopener noreferrer">{selectedNode}</a></p>
-                            ) : null
-                        }
-                        <svg ref={ref} viewBox="-150 -150 300 300" style={{ position: 'absolute', top: '0px', left: '0px', width: "100vw", height: "100vh", zIndex: '-10', backgroundColor: '#253237' }} />
-                    </div>
+        <div class={tw`text-green-400`}>
+            <a class={tw`mt-6 text-green-700`} href={`/`}>home</a>
+            <p class={tw`my-6 text-green-400`}>Crypto-Map: Ethereum by <a class={tw`text-blue-400`} href={'https://www.kojinglick.com'} target="_blank" rel="noopener noreferrer">Kojin Glick</a></p>
+            <p>Current Block Number: {blockNumber}</p>
+            <p>Transaction Count: {E.length}</p>
+
+            <div id="graph">
+                {
+                    selectedNode ? (
+                        <p>Selected Node: <a class={tw`text-blue-400`} href={`https://etherscan.io/address/${selectedNode}`} target="_blank" rel="noopener noreferrer">{selectedNode}</a></p>
+                    ) : null
+                }
+                <svg ref={ref} viewBox="-150 -150 300 300" style={{ position: 'absolute', top: '0px', left: '0px', width: "100vw", height: "100vh", zIndex: '-10', backgroundColor: '#253237' }} />
+            </div>
         </div>
     )
 }
