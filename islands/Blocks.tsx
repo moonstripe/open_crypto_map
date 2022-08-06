@@ -23,12 +23,6 @@ export default () => {
                 console.log(chunk)
                 setBlocks(messages => [...messages, chunk])
             }
-
-            // console.log(string)
-
-            // msgs.push(string)
-
-            // setMessages(msgs)
         }
 
         getStream().catch(console.error)
