@@ -9,7 +9,7 @@ export default () => {
         const getStream = async () => {
             let msgs: string[] = [];
             // get from stream
-            const res = await fetch('/api/');
+            const res = await fetch('/api');
 
             let result;
 
