@@ -15,9 +15,11 @@ interface NodesEdgesMeta {
 
 interface SocketClientProps {
     blockNumber: string;
+    pathname: string;
 }
 
-export default ({ blockNumber }: SocketClientProps) => {
+export default ({ blockNumber, pathname }: SocketClientProps) => {
+    console.log(pathname)
     const [nodes, setNodes] = useState<Record<string, string>[] | undefined>();
     const [edges, setEdges] = useState<Record<string, string>[] | undefined>();
     const [selectedNode, setSelectedNode] = useState<string | undefined>();
@@ -120,13 +122,15 @@ export default ({ blockNumber }: SocketClientProps) => {
 
         getTransactions()
 
-    }, [])
+    }, [blockNumber])
 
     useEffect(() => {
         if (nodes && edges) {
 
             console.log(nodes, edges)
             const svgElement = d3.select(ref.current)
+
+            const jettison = svgElement.append('g')
 
             if (nodes.length > 0) {
                 // compute values
@@ -170,7 +174,7 @@ export default ({ blockNumber }: SocketClientProps) => {
                 const refY = markerBoxHeight / 2;
                 const arrowPoints = [[0, 1], [0, 3], [4, 2]];
 
-                svgElement
+                jettison
                     .append('defs')
                     .append('marker')
                     .attr('id', 'arrow')
@@ -188,7 +192,7 @@ export default ({ blockNumber }: SocketClientProps) => {
                     .attr('fill', '#999')
 
 
-                const link = svgElement.append("g")
+                const link = jettison.append("g")
                     .selectAll("line")
                     .data(links_sim)
                     .join("line")
@@ -204,7 +208,7 @@ export default ({ blockNumber }: SocketClientProps) => {
 
                 link.append('title').text(({ index: i }) => edgesValue[i])
 
-                const node = svgElement.append("g")
+                const node = jettison.append("g")
                     .attr("fill", "nodeFill")
                     .attr("stroke", "#999")
                     .attr("stroke-opacity", 1)
@@ -249,15 +253,21 @@ export default ({ blockNumber }: SocketClientProps) => {
                 simulation.alpha(0.5).restart()
 
                 // stop simulation on unmount
-                return () => { simulation.stop(); }
+                return () => { simulation.stop(); jettison.remove() }
             }
         }
     }, [nodes, edges])
 
     return (
         <div class={tw`text-green-400`}>
-            <a class={tw`mt-6 text-green-700`} href={`/`}>home</a>
-            <p class={tw`my-6 text-green-400`}>Crypto-Map: Ethereum by <a class={tw`text-blue-400`} href={'https://www.kojinglick.com'} target="_blank" rel="noopener noreferrer">Kojin Glick</a></p>
+            {
+                pathname !== "/" ? (
+                    <div>
+                        <a class={tw`mt-6 text-green-700`} href={`/`}>home</a>
+                        <p class={tw`my-6 text-green-400`}>Crypto-Map: Ethereum by <a class={tw`text-blue-400`} href={'https://www.kojinglick.com'} target="_blank" rel="noopener noreferrer">Kojin Glick</a></p>
+                    </div>
+                ) : null
+            }
             <p>Current Block Number: {blockNumber}</p>
             <p>Transaction Count: {edges?.length}</p>
 
