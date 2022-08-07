@@ -4,14 +4,22 @@ import { tw } from "@twind"
 import { useEffect, useRef, useState } from "preact/hooks"
 import * as d3 from 'd3'
 import { forceSimulation } from 'd3-force';
+import Web3Utils from 'web3-utils'
+
+interface NodesEdgesMeta {
+    nodes: Record<string, string>[];
+    edges: Record<string, string>[];
+    count: number
+}
+
 
 interface SocketClientProps {
     blockNumber: string;
-    N: Record<string, string>[];
-    E: Record<string, string>[];
 }
 
-export default ({ blockNumber, N, E }: SocketClientProps) => {
+export default ({ blockNumber }: SocketClientProps) => {
+    const [nodes, setNodes] = useState<Record<string, string>[] | undefined>();
+    const [edges, setEdges] = useState<Record<string, string>[] | undefined>();
     const [selectedNode, setSelectedNode] = useState<string | undefined>();
 
     const ref = useRef(null)
@@ -45,139 +53,213 @@ export default ({ blockNumber, N, E }: SocketClientProps) => {
     }
 
     useEffect(() => {
-        const svgElement = d3.select(ref.current)
 
-        if (N.length > 0) {
-            // compute values
-            const nodesId = d3.map(N, (n: any) => n.id).map(intern);
-            const nodeTitles = d3.map(N, (_: any, i: any) => nodesId[i]).map(intern);
-            const edgesSource = d3.map(E, ({ source }: any) => source).map(intern);
-            const edgesTarget = d3.map(E, ({ target }: any) => target).map(intern);
-            const edgesValue = d3.map(E, ({ value }: any) => value).map(intern);
+        const getTransactions = async () => {
 
-            // Replace the input nodes and links with mutable objects for the simulation.
-            const nodes = d3.map(N, (_: any, i: any) => ({ id: nodesId[i] }));
-            const links = d3.map(E, (_: any, i: any) => ({ source: edgesSource[i], target: edgesTarget[i], weight: edgesValue[i] }));
+            const root = `https://eth.moonstripe.com/v1/mainnet`
 
-            // Get highest and Lowest Weight for color scaling
-            let highest: number = 0;
-            const lowest: number = 0;
-
-            links.map((l, i) => parseFloat(l.weight) > highest ? highest = parseFloat(l.weight) : null)
-
-            console.log(highest, lowest)
-
-            const forceNode = d3.forceManyBody().strength(0.01);
-            const forceLink = d3.forceLink(links).id(({ index: i }: any) => nodesId[i]);
-            const forceCollision = d3.forceCollide().radius(5);
-
-            const simulation = forceSimulation(nodes)
-                .force("charge", forceNode)
-                .force("link", forceLink)
-                .force("collision", forceCollision)
-
-            const color = d3.scaleLinear()
-                .domain([lowest, highest])
-                .range(["gray", "red"])
-                .interpolate(d3.interpolateCubehelix.gamma(3));
-
-            // Define the arrowhead marker variables
-
-            const markerBoxWidth = 20;
-            const markerBoxHeight = 4;
-            const refX = markerBoxWidth / 2;
-            const refY = markerBoxHeight / 2;
-            const markerWidth = markerBoxWidth / 2;
-            const markerHeight = markerBoxHeight / 2;
-            const arrowPoints = [[0, 1], [0, 3], [4, 2]];
-
-            svgElement
-                .append('defs')
-                .append('marker')
-                .attr('id', 'arrow')
-                .attr('viewBox', [0, 0, markerBoxWidth, markerBoxHeight])
-                .attr('width', "4px")
-                .attr('height', "4px")
-                .attr('refX', refX)
-                .attr('refY', refY)
-                .attr('markerWidth', markerBoxWidth)
-                .attr('markerHeight', markerBoxHeight)
-                .attr('orient', 'auto-start-reverse')
-                .append('path')
-                .attr('d', d3.line()(arrowPoints))
-                .attr('stroke', '#999')
-                .attr('fill', '#999')
-
-
-            const link = svgElement.append("g")
-                .selectAll("line")
-                .data(links)
-                .join("line")
-                .attr('stroke-linecap', 'rounded')
-                .style("stroke", (d: any) => {
-                    return color(parseFloat(d.weight))
+            const result = await fetch(
+                new Request(root, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        method: 'eth_getBlockByNumber',
+                        params: [Web3Utils.numberToHex(blockNumber), true],
+                        id: 1,
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 })
-                .attr('marker-end', 'url(#arrow)')
-                .attr("stroke-opacity", 0.6)
-                .attr("stroke-width", 1.5);
+            ).then(r => r.json());
 
+            const transactions = result.result.transactions
 
+            const returnData: NodesEdgesMeta = {
+                nodes: [],
+                edges: [],
+                count: 0
+            };
 
-            link.append('title').text(({ index: i }) => edgesValue[i])
+            const hexCheck: string[] = [];
 
-            const node = svgElement.append("g")
-                .attr("fill", "nodeFill")
-                .attr("stroke", "#999")
-                .attr("stroke-opacity", 1)
-                .attr("stroke-width", 0.5)
-                .selectAll("circle")
-                .data(nodes)
-                .join("circle")
-                .attr("r", 2)
-                .call(drag(simulation))
-                .on("click", (d: any) => {
-                    // setArray
-                    if (d3.style(d3.select(d.target).node(), 'fill') !== 'rgb(0, 0, 0)') {
+            transactions.forEach((t: any, i: number) => {
 
-                        setSelectedNode('')
-                    }
+                returnData.count++;
 
-                    setSelectedNode(d3.select(d.target).node().children[0].__data__.id)
+                const { from, to, value } = t;
 
-                    d3.selectAll("circle").attr("fill", "rgb(0, 0, 0)")
+                const node_from: Record<string, string> = { "id": from }
 
-                    return d3.select(d.target).attr("fill", "rgb(96, 165, 250)")
-                })
+                if (!hexCheck.includes(from)) {
+                    returnData.nodes.push(node_from)
+                    hexCheck.push(from)
+                }
 
-            node.append("title").text(({ index: i }: any) => nodeTitles[i]);
+                const node_to: Record<string, string> = { "id": to }
 
-            // update state on every frame
-            simulation.on("tick", () => {
-                link
-                    .attr("x1", (d: any) => d.source.x)
-                    .attr("y1", (d: any) => d.source.y)
-                    .attr("x2", (d: any) => d.target.x)
-                    .attr("y2", (d: any) => d.target.y);
+                if (!hexCheck.includes(to)) {
+                    returnData.nodes.push(node_to);
+                    hexCheck.push(to)
+                }
 
-                node
-                    .attr("cx", (d: any) => d.x)
-                    .attr("cy", (d: any) => d.y);
-            })
+                const edge: Record<string, string> = {
+                    "source": from,
+                    "target": to,
+                    "value": Web3Utils.fromWei(Web3Utils.hexToNumberString(value), "ether").toString(),
+                };
 
-            // slow down with a small alpha
-            simulation.alpha(0.5).restart()
+                returnData.edges.push(edge);
+            });
 
-            // stop simulation on unmount
-            return () => { simulation.stop(); }
+            setNodes(returnData.nodes)
+            setEdges(returnData.edges)
+
+            return result
         }
+
+        getTransactions()
+
     }, [])
+
+    useEffect(() => {
+        if (nodes && edges) {
+
+            console.log(nodes, edges)
+            const svgElement = d3.select(ref.current)
+
+            if (nodes.length > 0) {
+                // compute values
+                const nodesId = d3.map(nodes, (n: any) => n.id).map(intern);
+                const nodeTitles = d3.map(nodes, (_: any, i: any) => nodesId[i]).map(intern);
+                const edgesSource = d3.map(edges, ({ source }: any) => source).map(intern);
+                const edgesTarget = d3.map(edges, ({ target }: any) => target).map(intern);
+                const edgesValue = d3.map(edges, ({ value }: any) => value).map(intern);
+
+                // Replace the input nodes and links with mutable objects for the simulation.
+                const nodes_sim = d3.map(nodes, (_: any, i: any) => ({ id: nodesId[i] }));
+                const links_sim = d3.map(edges, (_: any, i: any) => ({ source: edgesSource[i], target: edgesTarget[i], weight: edgesValue[i] }));
+
+                // Get highest and lowest weight for color scaling
+                let highest: number = 0;
+                const lowest: number = 0;
+
+                links_sim.map((l, i) => parseFloat(l.weight) > highest ? highest = parseFloat(l.weight) : null)
+
+                console.log(highest, lowest)
+
+                const forceNode = d3.forceManyBody().strength(0.01);
+                const forceLink = d3.forceLink(links_sim).id(({ index: i }: any) => nodesId[i]);
+                const forceCollision = d3.forceCollide().radius(5);
+
+                const simulation = forceSimulation(nodes_sim)
+                    .force("charge", forceNode)
+                    .force("link", forceLink)
+                    .force("collision", forceCollision)
+
+                const color = d3.scaleLinear()
+                    .domain([lowest, highest])
+                    .range(["gray", "red"])
+                    .interpolate(d3.interpolateCubehelix.gamma(3));
+
+                // Define the arrowhead marker variables
+
+                const markerBoxWidth = 20;
+                const markerBoxHeight = 4;
+                const refX = markerBoxWidth / 2;
+                const refY = markerBoxHeight / 2;
+                const arrowPoints = [[0, 1], [0, 3], [4, 2]];
+
+                svgElement
+                    .append('defs')
+                    .append('marker')
+                    .attr('id', 'arrow')
+                    .attr('viewBox', [0, 0, markerBoxWidth, markerBoxHeight])
+                    .attr('width', "4px")
+                    .attr('height', "4px")
+                    .attr('refX', refX)
+                    .attr('refY', refY)
+                    .attr('markerWidth', markerBoxWidth)
+                    .attr('markerHeight', markerBoxHeight)
+                    .attr('orient', 'auto-start-reverse')
+                    .append('path')
+                    .attr('d', d3.line()(arrowPoints))
+                    .attr('stroke', '#999')
+                    .attr('fill', '#999')
+
+
+                const link = svgElement.append("g")
+                    .selectAll("line")
+                    .data(links_sim)
+                    .join("line")
+                    .attr('stroke-linecap', 'rounded')
+                    .style("stroke", (d: any) => {
+                        return color(parseFloat(d.weight))
+                    })
+                    .attr('marker-end', 'url(#arrow)')
+                    .attr("stroke-opacity", 0.6)
+                    .attr("stroke-width", 1.5);
+
+
+
+                link.append('title').text(({ index: i }) => edgesValue[i])
+
+                const node = svgElement.append("g")
+                    .attr("fill", "nodeFill")
+                    .attr("stroke", "#999")
+                    .attr("stroke-opacity", 1)
+                    .attr("stroke-width", 0.5)
+                    .selectAll("circle")
+                    .data(nodes_sim)
+                    .join("circle")
+                    .attr("r", 2)
+                    .call(drag(simulation))
+                    .on("click", (d: any) => {
+                        // setArray
+                        if (d3.style(d3.select(d.target).node(), 'fill') !== 'rgb(0, 0, 0)') {
+
+                            setSelectedNode('')
+                        }
+
+                        setSelectedNode(d3.select(d.target).node().children[0].__data__.id)
+
+                        d3.selectAll("circle").attr("fill", "rgb(0, 0, 0)")
+
+                        return d3.select(d.target).attr("fill", "rgb(96, 165, 250)")
+                    })
+
+                node.append("title").text(({ index: i }: any) => nodeTitles[i]);
+
+                // update state on every frame
+                simulation.on("tick", () => {
+                    link
+                        .attr("x1", (d: any) => d.source.x)
+                        .attr("y1", (d: any) => d.source.y)
+                        .attr("x2", (d: any) => d.target.x)
+                        .attr("y2", (d: any) => d.target.y);
+
+                    node
+                        .attr("cx", (d: any) => d.x)
+                        .attr("cy", (d: any) => d.y);
+                })
+
+                console.log('sim done')
+
+                // slow down with a small alpha
+                simulation.alpha(0.5).restart()
+
+                // stop simulation on unmount
+                return () => { simulation.stop(); }
+            }
+        }
+    }, [nodes, edges])
 
     return (
         <div class={tw`text-green-400`}>
             <a class={tw`mt-6 text-green-700`} href={`/`}>home</a>
             <p class={tw`my-6 text-green-400`}>Crypto-Map: Ethereum by <a class={tw`text-blue-400`} href={'https://www.kojinglick.com'} target="_blank" rel="noopener noreferrer">Kojin Glick</a></p>
             <p>Current Block Number: {blockNumber}</p>
-            <p>Transaction Count: {E.length}</p>
+            <p>Transaction Count: {edges?.length}</p>
 
             <div id="graph">
                 {

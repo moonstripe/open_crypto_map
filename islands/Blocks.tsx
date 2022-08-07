@@ -37,8 +37,8 @@ export default () => {
                 <ul>
                     {
                         blocks?.length > 0 ? blocks.map((e) => (
-                            <li class={tw`my-6 text-green-400`}><a href={`/${e}`} target="_blank" rel="noopener noreferrer">{e}</a></li>
-                        )) : null
+                            <li class={tw`my-3 text-green-400`}><a href={`/${e}`} target="_blank" rel="noopener noreferrer">{e}</a></li>
+                        )) : <li class={tw`my-3 text-green-400`}>Waiting for new block update...</li>
                     }
                 </ul>
             </div>
