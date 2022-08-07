@@ -52,7 +52,6 @@ export default ({ pathname }: BlocksProps) => {
                                     <option class={tw`my-3 text-green-400`} value={e}>{e}</option>
                                 ))
                             }
-
                         </select>
 
                     ) : <select><option class={tw`my-3 text-green-400`}>Loading blocks...</option></select>
