@@ -14,8 +14,6 @@ export const handler = (_req: Request, _ctx: HandlerContext): Response => {
     let checkBlock: string | undefined; 
 
     ws.on("open", () => {
-        console.log("connected to eth-mainnet (alchemy)")
-
         ws.send(JSON.stringify({jsonrpc:"2.0",id: 1, method: "eth_subscribe", params: ["newHeads"]}))
 
         // get
@@ -23,23 +21,21 @@ export const handler = (_req: Request, _ctx: HandlerContext): Response => {
             let subscription: string | undefined;
 
             const raw = JSON.parse(bN.data)
-            console.log(raw)
 
             if (raw.id === 1) {
                 subscription = Web3Utils.hexToNumberString(raw.result)
             }
 
             if (raw.params?.subscription) {
-                // handle different subscriptions
-
-                console.log(Web3Utils.hexToNumberString(raw.params.subscription))
+                // handle different subscriptions TODO
                 latestBlock = Web3Utils.hexToNumberString(raw.params.result.number)
             }
         })
 
     })
-    console.log('hit customHandler')
+
     let timer: number;
+    
     const body = new ReadableStream({
         start(controller) {
 

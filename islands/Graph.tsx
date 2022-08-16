@@ -19,7 +19,6 @@ interface SocketClientProps {
 }
 
 export default ({ blockNumber, pathname }: SocketClientProps) => {
-    console.log(pathname)
     const [nodes, setNodes] = useState<Record<string, string>[] | undefined>();
     const [edges, setEdges] = useState<Record<string, string>[] | undefined>();
     const [selectedNode, setSelectedNode] = useState<string | undefined>();
@@ -127,7 +126,6 @@ export default ({ blockNumber, pathname }: SocketClientProps) => {
     useEffect(() => {
         if (nodes && edges) {
 
-            console.log(nodes, edges)
             const svgElement = d3.select(ref.current)
 
             const jettison = svgElement.append('g')
@@ -149,8 +147,6 @@ export default ({ blockNumber, pathname }: SocketClientProps) => {
                 const lowest: number = 0;
 
                 links_sim.map((l, i) => parseFloat(l.weight) > highest ? highest = parseFloat(l.weight) : null)
-
-                console.log(highest, lowest)
 
                 const forceNode = d3.forceManyBody().strength(0.01);
                 const forceLink = d3.forceLink(links_sim).id(({ index: i }: any) => nodesId[i]);
@@ -246,8 +242,6 @@ export default ({ blockNumber, pathname }: SocketClientProps) => {
                         .attr("cx", (d: any) => d.x)
                         .attr("cy", (d: any) => d.y);
                 })
-
-                console.log('sim done')
 
                 // slow down with a small alpha
                 simulation.alpha(0.5).restart()
